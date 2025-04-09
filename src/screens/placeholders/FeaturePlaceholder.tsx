@@ -1,9 +1,8 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Platform, Dimensions } from 'react-native';
-import { Card, Title, Paragraph, Button, List, Divider } from 'react-native-paper';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { commonStyles } from '../../styles/theme';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import React from 'react';
+import { Dimensions, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, Card, Divider, List, Paragraph, Title } from 'react-native-paper';
 
 type RootStackParamList = {
   Home: undefined;
@@ -200,6 +199,31 @@ const FeaturePlaceholder = () => {
   const route = useRoute<FeaturePlaceholderRouteProp>();
   const { featureId, featureName, description } = route.params;
 
+  // Özellik ID'sine göre özel işlevler
+  const handleImplementFeature = () => {
+    // Gerçek uygulamada burada ilgili ekrana yönlendirme yapılır
+    alert(`${featureName} özelliği geliştiriliyor...`);
+  };
+
+  // Özellik ID'sine göre özel buton metni
+  const getActionButtonText = () => {
+    switch (featureId) {
+      case 1: return "Giriş Yap";
+      case 2: return "Listeleri Gör";
+      case 3: return "Liste Oluştur";
+      case 4: return "Kelime Ekle";
+      case 5: return "Öğrenmeye Başla";
+      case 6: return "Quiz'e Başla";
+      case 7: return "Detayları Gör";
+      case 8: return "İlerlemeyi Gör";
+      case 9: return "Ara";
+      case 10: return "Ayarları Aç";
+      case 11: return "Kamera ile Yakala";
+      case 12: return "Paylaş";
+      default: return "Uygula";
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
       <Card style={styles.card}>
@@ -212,6 +236,15 @@ const FeaturePlaceholder = () => {
           <View style={styles.statusContainer}>
             <Text style={styles.statusText}>Durum: Geliştirme Aşamasında</Text>
           </View>
+
+          <Button
+            mode="contained"
+            style={styles.actionButton}
+            icon={featureId === 11 ? "camera" : featureId === 12 ? "share" : "play"}
+            onPress={handleImplementFeature}
+          >
+            {getActionButtonText()}
+          </Button>
 
           <Divider style={styles.divider} />
 
@@ -335,6 +368,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#F59E0B', // amber
+  },
+  actionButton: {
+    marginTop: 16,
+    marginBottom: 16,
+    backgroundColor: '#4CAF50',
+    paddingVertical: 8,
   },
   divider: {
     marginVertical: 16,

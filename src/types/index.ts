@@ -1,24 +1,46 @@
 // Navigation Types
+
+// Root Stack Navigator Types
 export type RootStackParamList = {
-  Home: undefined;
-  FeaturePlaceholder: { 
-    featureId: number; 
-    featureName: string; 
-    description: string 
+  Auth: undefined;
+  Main: undefined;
+  FeaturePlaceholder: {
+    featureId: number;
+    featureName: string;
+    description: string
   };
-  // These would be implemented by the team
+};
+
+// Auth Stack Navigator Types
+export type AuthStackParamList = {
   Login: undefined;
   Register: undefined;
+  ForgotPassword: undefined;
+};
+
+// Main Tab Navigator Types
+export type MainTabParamList = {
   Lists: undefined;
-  CreateList: undefined;
-  ListDetail: { listId: string };
-  AddWord: { listId: string };
-  Learn: { listId: string };
-  Quiz: { listId: string };
+  Learn: undefined;
   Progress: undefined;
-  Search: undefined;
+  Social: undefined;
   Settings: undefined;
-  // Innovative features would be added here
+};
+
+// Lists Stack Navigator Types
+export type ListsStackParamList = {
+  MyLists: undefined;
+  CreateList: undefined;
+  ListDetail: { listId: string; listName: string };
+  AddWord: { listId: string; listName: string };
+  Camera: { listId: string; listName: string };
+  Search: undefined;
+};
+
+// Learn Stack Navigator Types
+export type LearnStackParamList = {
+  LearnHome: undefined;
+  Quiz: { listId: string; listName: string };
 };
 
 // Data Types

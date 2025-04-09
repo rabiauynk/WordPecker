@@ -1,9 +1,8 @@
-import React from 'react';
-import { View, StyleSheet, ScrollView, Text, Platform, Dimensions } from 'react-native';
-import { Button, Card, Title, Paragraph } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { commonStyles } from '../styles/theme';
+import React from 'react';
+import { Dimensions, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, Card, Divider, Paragraph, Title } from 'react-native-paper';
 
 type RootStackParamList = {
   Home: undefined;
@@ -178,15 +177,49 @@ const HomeScreen = () => {
     });
   };
 
+  // Yeni eklenen ekranlar için navigasyon fonksiyonları
+  const navigateToLists = () => {
+    navigation.navigate('FeaturePlaceholder', {
+      featureId: 4,
+      featureName: 'Kelime Listeleri',
+      description: 'Tüm kelime listelerinizi görüntüleyin ve yönetin.'
+    });
+  };
+
+  const navigateToLearn = () => {
+    navigation.navigate('FeaturePlaceholder', {
+      featureId: 7,
+      featureName: 'Öğrenme Modu',
+      description: 'Kelimelerinizi interaktif alıştırmalarla öğrenin.'
+    });
+  };
+
+  const navigateToProgress = () => {
+    navigation.navigate('FeaturePlaceholder', {
+      featureId: 8,
+      featureName: 'İlerleme Takibi',
+      description: 'Öğrenme ilerlemenizi takip edin.'
+    });
+  };
+
+  const navigateToSettings = () => {
+    navigation.navigate('FeaturePlaceholder', {
+      featureId: 10,
+      featureName: 'Ayarlar',
+      description: 'Uygulama ayarlarını özelleştirin.'
+    });
+  };
+
   if (Platform.OS === 'web') {
     return (
       <View style={styles.container}>
-        <Text style={styles.instructions}>
-          Bu proje 12 özellik için yer tutucu ekranlar içermektedir.
-          Göreviniz temel özellikleri uygulamak ve 2 yenilikçi özellik geliştirmektir.
-          Özellik açıklaması ve gereksinimlerini görmek için her bir düğmeye tıklayın.
-        </Text>
-        
+        <View style={styles.header}>
+          <Title style={styles.title}>WordPecker</Title>
+          <Paragraph style={styles.subtitle}>
+            Kişiselleştirilmiş Dil Öğrenme Uygulaması
+          </Paragraph>
+        </View>
+
         <View style={styles.grid}>
           {features.map((feature) => (
             <Card key={feature.id} style={styles.card}>
@@ -197,8 +230,8 @@ const HomeScreen = () => {
                 </Paragraph>
               </Card.Content>
               <Card.Actions>
-                <Button 
-                  mode="contained" 
+                <Button
+                  mode="contained"
                   onPress={() => navigateToFeature(feature)}
                   style={styles.button}
                 >
@@ -213,18 +246,49 @@ const HomeScreen = () => {
   }
 
   return (
-    <ScrollView 
+    <ScrollView
       style={styles.container}
       contentContainerStyle={styles.scrollViewContent}
       showsVerticalScrollIndicator={true}
     >
-      {/* Mobil için mevcut içerik */}
-      <Text style={styles.instructions}>
-        Bu proje 12 özellik için yer tutucu ekranlar içermektedir.
-        Göreviniz temel özellikleri uygulamak ve 2 yenilikçi özellik geliştirmektir.
-        Özellik açıklaması ve gereksinimlerini görmek için her bir düğmeye tıklayın.
-      </Text>
-      
+      <View style={styles.header}>
+        <Title style={styles.title}>WordPecker</Title>
+        <Paragraph style={styles.subtitle}>
+          Kişiselleştirilmiş Dil Öğrenme Uygulaması
+        </Paragraph>
+      </View>
+
+      {/* Hızlı Erişim Kartları */}
+      <View style={styles.quickAccessContainer}>
+        <Card style={styles.quickAccessCard} onPress={navigateToLists}>
+          <Card.Content style={styles.quickAccessContent}>
+            <Text style={styles.quickAccessText}>Listelerim</Text>
+          </Card.Content>
+        </Card>
+
+        <Card style={styles.quickAccessCard} onPress={navigateToLearn}>
+          <Card.Content style={styles.quickAccessContent}>
+            <Text style={styles.quickAccessText}>Öğren</Text>
+          </Card.Content>
+        </Card>
+
+        <Card style={styles.quickAccessCard} onPress={navigateToProgress}>
+          <Card.Content style={styles.quickAccessContent}>
+            <Text style={styles.quickAccessText}>İlerleme</Text>
+          </Card.Content>
+        </Card>
+
+        <Card style={styles.quickAccessCard} onPress={navigateToSettings}>
+          <Card.Content style={styles.quickAccessContent}>
+            <Text style={styles.quickAccessText}>Ayarlar</Text>
+          </Card.Content>
+        </Card>
+      </View>
+
+      <Divider style={styles.divider} />
+
+      <Title style={styles.sectionTitle}>Tüm Özellikler</Title>
+
       <View style={styles.grid}>
         {features.map((feature) => (
           <Card key={feature.id} style={styles.card}>
@@ -235,8 +299,8 @@ const HomeScreen = () => {
               </Paragraph>
             </Card.Content>
             <Card.Actions>
-              <Button 
-                mode="contained" 
+              <Button
+                mode="contained"
                 onPress={() => navigateToFeature(feature)}
                 style={styles.button}
               >
@@ -271,11 +335,59 @@ const styles = StyleSheet.create({
       flexGrow: 1,
     }),
   },
+  header: {
+    marginBottom: 24,
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#94A3B8',
+    textAlign: 'center',
+  },
   instructions: {
     fontSize: 16,
     marginBottom: 20,
     lineHeight: 24,
     color: '#94A3B8',
+  },
+  quickAccessContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 24,
+  },
+  quickAccessCard: {
+    width: '48%',
+    marginBottom: 16,
+    backgroundColor: '#1E293B',
+    borderColor: '#334155',
+    borderWidth: 1,
+  },
+  quickAccessContent: {
+    alignItems: 'center',
+    padding: 16,
+  },
+  quickAccessText: {
+    color: '#FFFFFF',
+    marginTop: 8,
+    fontSize: 16,
+  },
+  divider: {
+    backgroundColor: '#334155',
+    height: 1,
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    color: '#FFFFFF',
+    marginBottom: 16,
   },
   grid: {
     flexDirection: 'row',
