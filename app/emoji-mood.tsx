@@ -1,89 +1,87 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
-import { useRouter, Stack } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Smile, Check, RefreshCw } from 'lucide-react-native';
+import { Button } from '@/components/Button';
+import { WordCard } from '@/components/WordCard';
 import { colors } from '@/constants/colors';
 import { useSettingsStore } from '@/store/settingsStore';
-import { WordCard } from '@/components/WordCard';
-import { Button } from '@/components/Button';
-import { Word } from '@/types/wordList';
+import { Stack } from 'expo-router';
+import { Check, RefreshCw, Smile } from 'lucide-react-native';
+import React, { useState } from 'react';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-// Türkçe emoji duygu durumları ve ilgili kelimeler
+// English emoji moods and related words
 const emojiMoods = [
-  { emoji: '😊', mood: 'Mutlu', words: [
-    { id: 'h1', term: 'neşeli', definition: 'sevinç dolu, keyifli', example: 'Bugün çok neşeli görünüyorsun.', masteryLevel: 0, createdAt: new Date().toISOString() },
-    { id: 'h2', term: 'keyifli', definition: 'hoşnut, memnun', example: 'Keyifli bir hafta sonu geçirdik.', masteryLevel: 0, createdAt: new Date().toISOString() },
-    { id: 'h3', term: 'sevinçli', definition: 'mutluluk duyan', example: 'Sınavı kazandığı için çok sevinçliydi.', masteryLevel: 0, createdAt: new Date().toISOString() },
+  { emoji: '😊', mood: 'Happy', words: [
+    { id: 'h1', term: 'cheerful', definition: 'noticeably happy and optimistic', example: 'You look very cheerful today.', masteryLevel: 0, createdAt: new Date().toISOString() },
+    { id: 'h2', term: 'joyful', definition: 'feeling, expressing, or causing great pleasure and happiness', example: 'We had a joyful weekend.', masteryLevel: 0, createdAt: new Date().toISOString() },
+    { id: 'h3', term: 'delighted', definition: 'feeling or showing great pleasure', example: 'She was delighted to pass the exam.', masteryLevel: 0, createdAt: new Date().toISOString() },
   ]},
-  { emoji: '😢', mood: 'Üzgün', words: [
-    { id: 's1', term: 'hüzünlü', definition: 'üzüntü veren, kederli', example: 'Hüzünlü bir film izledik.', masteryLevel: 0, createdAt: new Date().toISOString() },
-    { id: 's2', term: 'kederli', definition: 'üzüntülü, tasalı', example: 'Haberi duyunca kederli bir hal aldı.', masteryLevel: 0, createdAt: new Date().toISOString() },
-    { id: 's3', term: 'mahzun', definition: 'üzgün, kederli', example: 'Mahzun bir şekilde pencereden dışarı bakıyordu.', masteryLevel: 0, createdAt: new Date().toISOString() },
+  { emoji: '😢', mood: 'Sad', words: [
+    { id: 's1', term: 'sorrowful', definition: 'feeling or showing grief', example: 'We watched a sorrowful movie.', masteryLevel: 0, createdAt: new Date().toISOString() },
+    { id: 's2', term: 'melancholic', definition: 'feeling or expressing pensive sadness', example: 'He became melancholic when he heard the news.', masteryLevel: 0, createdAt: new Date().toISOString() },
+    { id: 's3', term: 'gloomy', definition: 'dark or poorly lit, especially so as to appear depressing', example: 'He was looking out the window with a gloomy expression.', masteryLevel: 0, createdAt: new Date().toISOString() },
   ]},
-  { emoji: '😡', mood: 'Kızgın', words: [
-    { id: 'a1', term: 'öfkeli', definition: 'çok kızgın', example: 'Öfkeli bir şekilde odadan çıktı.', masteryLevel: 0, createdAt: new Date().toISOString() },
-    { id: 'a2', term: 'sinirli', definition: 'öfkeli, kızgın', example: 'Bu sabah çok sinirli uyandı.', masteryLevel: 0, createdAt: new Date().toISOString() },
-    { id: 'a3', term: 'hiddetli', definition: 'çok öfkeli', example: 'Hiddetli bir tonla konuşuyordu.', masteryLevel: 0, createdAt: new Date().toISOString() },
+  { emoji: '😡', mood: 'Angry', words: [
+    { id: 'a1', term: 'furious', definition: 'extremely angry', example: 'He left the room in a furious manner.', masteryLevel: 0, createdAt: new Date().toISOString() },
+    { id: 'a2', term: 'irritated', definition: 'showing or feeling slight anger', example: 'He woke up very irritated this morning.', masteryLevel: 0, createdAt: new Date().toISOString() },
+    { id: 'a3', term: 'enraged', definition: 'very angry; furious', example: 'He was speaking in an enraged tone.', masteryLevel: 0, createdAt: new Date().toISOString() },
   ]},
-  { emoji: '😴', mood: 'Yorgun', words: [
-    { id: 't1', term: 'bitkin', definition: 'çok yorgun', example: 'İşten bitkin bir halde döndü.', masteryLevel: 0, createdAt: new Date().toISOString() },
-    { id: 't2', term: 'halsiz', definition: 'güçsüz, yorgun', example: 'Hasta olduğu için halsiz hissediyordu.', masteryLevel: 0, createdAt: new Date().toISOString() },
-    { id: 't3', term: 'tükenmiş', definition: 'enerjisi bitmiş', example: 'Uzun yürüyüşten sonra tükenmiş haldeydi.', masteryLevel: 0, createdAt: new Date().toISOString() },
+  { emoji: '😴', mood: 'Tired', words: [
+    { id: 't1', term: 'exhausted', definition: 'drained of energy or effectiveness', example: 'He returned from work in an exhausted state.', masteryLevel: 0, createdAt: new Date().toISOString() },
+    { id: 't2', term: 'weary', definition: 'feeling or showing tiredness', example: 'She felt weary because she was sick.', masteryLevel: 0, createdAt: new Date().toISOString() },
+    { id: 't3', term: 'fatigued', definition: 'extremely tired', example: 'He was fatigued after the long walk.', masteryLevel: 0, createdAt: new Date().toISOString() },
   ]},
-  { emoji: '😮', mood: 'Şaşkın', words: [
-    { id: 'su1', term: 'hayret', definition: 'şaşkınlık', example: 'Hayret içinde haberi dinledi.', masteryLevel: 0, createdAt: new Date().toISOString() },
-    { id: 'su2', term: 'afallama', definition: 'beklenmedik durum karşısında şaşırma', example: 'Haberi duyunca afallayıp kaldı.', masteryLevel: 0, createdAt: new Date().toISOString() },
-    { id: 'su3', term: 'şaşkın', definition: 'ne yapacağını bilemez durumda', example: 'Şaşkın bir ifadeyle etrafına bakındı.', masteryLevel: 0, createdAt: new Date().toISOString() },
+  { emoji: '😮', mood: 'Surprised', words: [
+    { id: 'su1', term: 'astonished', definition: 'greatly surprised or impressed', example: 'He listened to the news with astonishment.', masteryLevel: 0, createdAt: new Date().toISOString() },
+    { id: 'su2', term: 'startled', definition: 'feeling or showing sudden shock or alarm', example: 'He was startled when he heard the news.', masteryLevel: 0, createdAt: new Date().toISOString() },
+    { id: 'su3', term: 'bewildered', definition: 'perplexed and confused; very puzzled', example: 'He looked around with a bewildered expression.', masteryLevel: 0, createdAt: new Date().toISOString() },
   ]},
-  { emoji: '😨', mood: 'Korkmuş', words: [
-    { id: 'sc1', term: 'ürkmüş', definition: 'korkmuş, tedirgin', example: 'Sesten ürkmüş bir halde yerinden sıçradı.', masteryLevel: 0, createdAt: new Date().toISOString() },
-    { id: 'sc2', term: 'tedirgin', definition: 'huzursuz, kaygılı', example: 'Son olaylardan dolayı çok tedirgin.', masteryLevel: 0, createdAt: new Date().toISOString() },
-    { id: 'sc3', term: 'endişeli', definition: 'kaygılı, tasalı', example: 'Endişeli gözlerle saate bakıyordu.', masteryLevel: 0, createdAt: new Date().toISOString() },
+  { emoji: '😨', mood: 'Scared', words: [
+    { id: 'sc1', term: 'frightened', definition: 'afraid or anxious', example: 'He jumped up in a frightened state from the sound.', masteryLevel: 0, createdAt: new Date().toISOString() },
+    { id: 'sc2', term: 'anxious', definition: 'feeling or showing worry, nervousness', example: 'He is very anxious due to recent events.', masteryLevel: 0, createdAt: new Date().toISOString() },
+    { id: 'sc3', term: 'worried', definition: 'anxious or troubled about actual or potential problems', example: 'He was looking at the clock with worried eyes.', masteryLevel: 0, createdAt: new Date().toISOString() },
   ]},
 ];
 
 export default function EmojiMoodScreen() {
-  const router = useRouter();
   const { theme } = useSettingsStore();
   const themeColors = colors[theme === 'dark' ? 'dark' : 'light'];
-  
+
   const [selectedMood, setSelectedMood] = useState<typeof emojiMoods[0] | null>(null);
   const [userSentence, setUserSentence] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [feedback, setFeedback] = useState('');
-  
+
   const handleSelectMood = (mood: typeof emojiMoods[0]) => {
     setSelectedMood(mood);
     setIsSubmitted(false);
     setUserSentence('');
     setFeedback('');
   };
-  
+
   const handleSubmitSentence = () => {
     if (!userSentence.trim()) {
       return;
     }
-    
-    const containsMoodWord = selectedMood?.words.some(word => 
+
+    const containsMoodWord = selectedMood?.words.some(word =>
       userSentence.toLowerCase().includes(word.term.toLowerCase())
     );
-    
+
     if (containsMoodWord) {
-      setFeedback('Harika! Duygu kelimelerinden birini doğru kullandın.');
+      setFeedback('Harika! You used one of the emotion words correctly.');
     } else {
-      setFeedback('Tekrar dene! Cümlende duygu kelimelerinden birini kullanmayı unutma.');
+      setFeedback('Try again! Remember to use one of the emotion words in your sentence.');
     }
-    
+
     setIsSubmitted(true);
   };
-  
+
   const handleTryAgain = () => {
     setIsSubmitted(false);
     setUserSentence('');
     setFeedback('');
   };
-  
+
   const handleNewMood = () => {
     setSelectedMood(null);
     setIsSubmitted(false);
@@ -93,25 +91,25 @@ export default function EmojiMoodScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]} edges={['bottom']}>
-      <Stack.Screen options={{ title: 'Duygu Kelimeleri' }} />
-      
+      <Stack.Screen options={{ title: 'Emotion Words' }} />
+
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
-          <Text style={[styles.title, { color: themeColors.text }]}>Duygu Kelimeleri</Text>
+          <Text style={[styles.title, { color: themeColors.text }]}>Emotion Words</Text>
           <Text style={[styles.subtitle, { color: themeColors.textSecondary }]}>
-            Farklı duygularla ilgili kelimeleri öğren
+            Learn words related to different emotions
           </Text>
         </View>
-        
+
         {!selectedMood ? (
           <>
             <Text style={[styles.instruction, { color: themeColors.text }]}>
-              Kelimelerini görmek istediğin duyguyu seç:
+              Select an emotion to see related words:
             </Text>
-            
+
             <View style={styles.emojiGrid}>
               {emojiMoods.map((mood, index) => (
-                <TouchableOpacity 
+                <TouchableOpacity
                   key={index}
                   style={[styles.emojiCard, { backgroundColor: themeColors.card, borderColor: themeColors.border }]}
                   onPress={() => handleSelectMood(mood)}
@@ -127,17 +125,17 @@ export default function EmojiMoodScreen() {
             <View style={[styles.selectedMoodCard, { backgroundColor: themeColors.card, borderColor: themeColors.border }]}>
               <Text style={styles.selectedEmoji}>{selectedMood.emoji}</Text>
               <Text style={[styles.selectedMoodName, { color: themeColors.text }]}>{selectedMood.mood}</Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.changeMoodButton, { borderColor: themeColors.border }]}
                 onPress={handleNewMood}
               >
-                <Text style={[styles.changeMoodText, { color: themeColors.primary }]}>Duygu Değiştir</Text>
+                <Text style={[styles.changeMoodText, { color: themeColors.primary }]}>Change Emotion</Text>
               </TouchableOpacity>
             </View>
-            
+
             <View style={styles.vocabularySection}>
-              <Text style={[styles.sectionTitle, { color: themeColors.text }]}>Kelimeler</Text>
-              
+              <Text style={[styles.sectionTitle, { color: themeColors.text }]}>Words</Text>
+
               {selectedMood.words.map(word => (
                 <WordCard
                   key={word.id}
@@ -146,17 +144,17 @@ export default function EmojiMoodScreen() {
                 />
               ))}
             </View>
-            
+
             <View style={styles.practiceSection}>
-              <Text style={[styles.sectionTitle, { color: themeColors.text }]}>Alıştırma</Text>
+              <Text style={[styles.sectionTitle, { color: themeColors.text }]}>Practice</Text>
               <Text style={[styles.practiceInstruction, { color: themeColors.textSecondary }]}>
-                Yukarıdaki kelimelerden birini kullanarak bir cümle yaz:
+                Write a sentence using one of the words above:
               </Text>
-              
+
               <View style={[styles.inputContainer, { backgroundColor: themeColors.card, borderColor: themeColors.border }]}>
                 <TextInput
                   style={[styles.sentenceInput, { color: themeColors.text }]}
-                  placeholder="Cümleni buraya yaz..."
+                  placeholder="Write your sentence here..."
                   placeholderTextColor={themeColors.textSecondary}
                   value={userSentence}
                   onChangeText={setUserSentence}
@@ -164,40 +162,40 @@ export default function EmojiMoodScreen() {
                   editable={!isSubmitted}
                 />
               </View>
-              
+
               {isSubmitted ? (
                 <>
                   <View style={[
-                    styles.feedbackContainer, 
-                    { 
-                      backgroundColor: feedback.includes('Harika') 
-                        ? themeColors.success + '20' 
-                        : themeColors.warning + '20' 
+                    styles.feedbackContainer,
+                    {
+                      backgroundColor: feedback.includes('Harika')
+                        ? themeColors.success + '20'
+                        : themeColors.warning + '20'
                     }
                   ]}>
                     <Text style={[
-                      styles.feedbackText, 
-                      { 
-                        color: feedback.includes('Harika') 
-                          ? themeColors.success 
-                          : themeColors.warning 
+                      styles.feedbackText,
+                      {
+                        color: feedback.includes('Harika')
+                          ? themeColors.success
+                          : themeColors.warning
                       }
                     ]}>
-                      {feedback}
+                      {feedback.includes('Harika') ? 'Great! You used one of the emotion words correctly.' : 'Try again! Remember to use one of the emotion words in your sentence.'}
                     </Text>
                   </View>
-                  
+
                   <View style={styles.actionButtons}>
                     <Button
-                      title="Tekrar Dene"
+                      title="Try Again"
                       onPress={handleTryAgain}
                       variant="outline"
                       leftIcon={<RefreshCw size={20} color={themeColors.primary} />}
                       style={styles.actionButton}
                     />
-                    
+
                     <Button
-                      title="Yeni Duygu"
+                      title="New Emotion"
                       onPress={handleNewMood}
                       leftIcon={<Smile size={20} color="#FFFFFF" />}
                       style={styles.actionButton}
@@ -206,7 +204,7 @@ export default function EmojiMoodScreen() {
                 </>
               ) : (
                 <Button
-                  title="Cümleyi Kontrol Et"
+                  title="Check Sentence"
                   onPress={handleSubmitSentence}
                   disabled={!userSentence.trim()}
                   leftIcon={<Check size={20} color="#FFFFFF" />}

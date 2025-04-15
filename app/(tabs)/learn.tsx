@@ -140,9 +140,9 @@ export default function LearnScreen() {
                 style={[styles.featureCard, { backgroundColor: themeColors.card, borderColor: themeColors.border }]}
                 onPress={() => router.push('/emoji-mood')}
               >
-                <Text style={[styles.featureTitle, { color: themeColors.text }]}>EmojiMood</Text>
+                <Text style={[styles.featureTitle, { color: themeColors.text }]}>Emotion Words</Text>
                 <Text style={[styles.featureDescription, { color: themeColors.textSecondary }]}>
-                  Learn emotion-based vocabulary
+                  Learn vocabulary related to emotions
                 </Text>
               </TouchableOpacity>
             </View>
