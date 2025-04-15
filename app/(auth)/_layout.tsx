@@ -1,5 +1,5 @@
 import { Stack, useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useColorScheme } from "react-native";
 import { colors } from "../../constants/colors";
 import { useAuthStore } from "../../store/authStore";
@@ -13,12 +13,33 @@ export default function AuthLayout() {
   const activeTheme = theme === 'system' ? systemTheme || 'light' : theme;
   const themeColors = colors[activeTheme === 'dark' ? 'dark' : 'light'];
 
+  // Navigasyon hazır olduğunda kontrol etmek için state
+  const [isNavigationReady, setIsNavigationReady] = useState(false);
+
+  // İlk render'dan sonra navigasyon hazır olarak işaretlenir
+  useEffect(() => {
+    // Bir sonraki render döngüsünde navigasyon hazır olarak işaretle
+    const timer = setTimeout(() => {
+      setIsNavigationReady(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   // Kullanıcı oturum açmışsa ana ekrana yönlendir
   useEffect(() => {
+    // Navigasyon hazır değilse, hiçbir şey yapma
+    if (!isNavigationReady) return;
+
     if (user) {
-      router.replace('/(tabs)');
+      // setTimeout kullanarak navigasyonu bir sonraki döngüye ertele
+      const timer = setTimeout(() => {
+        router.replace('/(tabs)');
+      }, 0);
+
+      return () => clearTimeout(timer);
     }
-  }, [user, router]);
+  }, [user, router, isNavigationReady]);
 
   return (
     <Stack
